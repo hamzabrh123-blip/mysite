@@ -10,7 +10,7 @@ DEBUG = True
 ALLOWED_HOSTS = [
     "localhost",
     "127.0.0.1",
-    "https://brhnews-static.onrender.com/",  # Render ka domain
+    "https://mysite-1-kg2r.onrender.com/",  # Render ka domain
     ".onrender.com",                # Future ke liye wildcard
 ]
 
