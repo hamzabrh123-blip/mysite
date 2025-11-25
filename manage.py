@@ -20,3 +20,7 @@ def main():
 
 if __name__ == '__main__':
     main()
+
+        from django.contrib.staticfiles.handlers import StaticFilesHandler
+
+        application = StaticFilesHandler(get_wsgi_application())
