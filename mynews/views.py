@@ -2,6 +2,61 @@ from django.shortcuts import render, get_object_or_404, redirect
 from django.db import models
 from .models import News, Comment
 
+from django.contrib import messages
+from django.core.mail import send_mail
+from .models import AdminOTP
+import random
+from django.contrib.auth import login
+from django.contrib.auth.models import User
+
+
+ADMIN_EMAIL = "hamzabrh@gmail.com"
+# Step 1 → Send OTP
+def admin_login(request):
+    if request.method == "POST":
+        email = request.POST.get("email")
+
+        if email != ADMIN_EMAIL:
+            messages.error(request, "You are not authorized!")
+            return redirect("admin_login")
+
+        otp = str(random.randint(100000, 999999))
+        AdminOTP.objects.create(email=email, otp=otp)
+
+        send_mail(
+            "Admin Login OTP",
+            f"Your OTP is: {otp}",
+            "hamzabrh@gmail.com",
+            [email],
+            fail_silently=False,
+        )
+
+        request.session["admin_email"] = email
+        return redirect("admin_verify")
+
+    return render(request, "admin_login.html")
+
+
+# Step 2 → Verify OTP
+def admin_verify(request):
+    if request.method == "POST":
+        entered = request.POST.get("otp")
+        email = request.session.get("admin_email")
+
+        data = AdminOTP.objects.filter(email=email).last()
+
+        if data and data.otp == entered:
+            # Auto create or load admin user
+            user, created = User.objects.get_or_create(
+                username="otpadmin",
+                defaults={"email": email, "is_staff": True, "is_superuser": True}
+            )
+            login(request, user)
+            return redirect("/admin/")
+
+        messages.error(request, "Invalid OTP!")
+
+    return render(request, "admin_verify.html")
 
 # 🏠 Homepage View
 def home(request):
