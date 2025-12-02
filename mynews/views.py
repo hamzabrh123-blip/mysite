@@ -129,3 +129,20 @@ def about(request):
 
 def contact(request):
     return render(request, 'mynews/contact.html')
+
+
+from django.contrib.auth import get_user_model
+from django.http import HttpResponse
+
+def create_admin(request):
+    User = get_user_model()
+    
+    if User.objects.filter(username="hamzareal").exists():
+        return HttpResponse("Admin already exists")
+
+    User.objects.create_superuser(
+        username="hamzareal",
+        email="hamzareal@gmail.com",
+        password="Hamza@5555"
+    )
+    return HttpResponse("Admin Created Successfully!")
