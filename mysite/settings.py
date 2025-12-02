@@ -122,9 +122,3 @@ EMAIL_HOST_PASSWORD = "your-app-password"
 # CKEditor
 CKEDITOR_UPLOAD_PATH = "uploads/"
 CKEDITOR_ALLOW_NONIMAGE_FILES = False
-
-import os
-
-if os.environ.get("RENDER"):
-    from mynews.create_admin import create_admin
-    create_admin()
